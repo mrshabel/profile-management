@@ -5,16 +5,6 @@ from datetime import datetime, date
 class UserBase(BaseModel):
     username: str = Field(..., description="The username of the current user")
 
-
-class UserSignUp(UserBase):
-    first_name: str = Field(..., title="First Name",
-                            description="First Name of the user"),
-    last_name: str = Field(..., title="Last Name",
-                           description="Last Name of the user")
-    password: str = Field(..., title="Password",
-                          description="Password of length 8 or more", min_length=8)
-
-
 class UserLogin(UserBase):
     password: str = Field(...,
                           title="Password",
@@ -54,14 +44,7 @@ class SuccessResponse(BaseModel):
     message: str = Field(title="Message",
                          default="success", description="The success message")
     data: UserSchema = Field(..., title="User's data",
-                             description="The user's data")
-
-class SuccessResponseForLogin(BaseModel):
-    message: str = Field(title="Message",
-                         default="success", description="The success message")
-    data: UserSchema = Field(..., title="User's data",
-                             description="The user's data")
-                             
+                             description="The user's data")                           
 
 
 class MultiSuccessResponse(BaseModel):
