@@ -14,7 +14,11 @@ async def lifespan(app: FastAPI):
 
 
 # create application server instance
-app = FastAPI(lifespan=lifespan, title="Profile Management Application")
+app = FastAPI(
+    lifespan=lifespan,
+    title="Profile Management Application",
+    description="An application for managing user personal information and profiles",
+)
 
 
 app.include_router(health_check.router)

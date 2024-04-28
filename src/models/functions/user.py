@@ -1,8 +1,7 @@
 from ..database import db
 from ..tables.user import UsersTable
 from src.schemas.user import UserSchema
-from sqlalchemy.sql.expression import (
-    Insert as InsertQuery, Select as SelectQuery)
+from sqlalchemy.sql.expression import Insert as InsertQuery, Select as SelectQuery
 
 
 # get user

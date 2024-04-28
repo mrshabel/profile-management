@@ -6,12 +6,10 @@ from fastapi.logger import logger
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
 from src.config import AppConfig
-from src.schemas.auth import TokenData, UserSignUp
-from src.schemas.user import UserSchema
+from src.schemas.auth import TokenData, UserSignUp, UserData
 from src.models.tables.user import UsersTable
 from ..database import db
-from sqlalchemy.sql.expression import (
-    Insert as InsertQuery, Select as SelectQuery)
+from sqlalchemy.sql.expression import Insert as InsertQuery, Select as SelectQuery
 from asyncpg.exceptions import UniqueViolationError
 
 
@@ -39,39 +37,38 @@ def create_access_token(payload: dict) -> str:
     `Returns`: Access token of the user
     """
     to_encode = payload.copy()
-    expire = datetime.now(
-        timezone.utc) + timedelta(minutes=float(AppConfig.JWT_ACCESS_TOKEN_EXPIRES_MINUTES.value))
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=float(AppConfig.JWT_ACCESS_TOKEN_EXPIRES_MINUTES.value)
+    )
     to_encode.update({"exp": expire})
 
-    token = jwt.encode(to_encode, AppConfig.JWT_SECRET.value,
-                       algorithm="HS256")
+    token = jwt.encode(to_encode, AppConfig.JWT_SECRET.value, algorithm="HS256")
     return token
 
 
-async def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> UserSchema | None:
-    try:
-        query: SelectQuery = UsersTable.select().where(
-            UsersTable.c.username == form_data.username)
-        user = await db.fetch_one(query)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to login user")
+async def login_user(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> UserData | None:
+    query: SelectQuery = UsersTable.select().where(
+        UsersTable.c.username == form_data.username
+    )
+    user = await db.fetch_one(query)
+
     if not user:
         return None
 
-    is_valid_user = verify_password(form_data.password, user.password)
-    if not is_valid_user:
-        return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
-
-    return UserSchema(**user)
+    return UserData(**user)
 
 
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenData:
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> TokenData:
     user = await login_user(form_data)
     if not user:
         logger.error("Fatal error", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
     token = create_access_token({"id": str(user.id)})
     return TokenData(token)
 
@@ -81,17 +78,9 @@ async def signup_user(req_data: UserSignUp) -> str:
     hashed_password = get_password_hash(req_data.password)
     req_data.password = hashed_password
 
-    try:
-        query: InsertQuery = UsersTable.insert().values(
-            **req_data.model_dump(), created_at=now, updated_at=now)
-        record_id = await db.execute(query=query)
-    except UniqueViolationError as e:
-        logger.error("Duplicate key error", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="User already exists")
-    except BaseException as e:
-        logger.error("Fatal error", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to signup")
+    query: InsertQuery = UsersTable.insert().values(
+        **req_data.model_dump(), created_at=now, updated_at=now
+    )
+    record_id = await db.execute(query=query)
 
     return record_id
