@@ -8,11 +8,9 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Connect to the database when the server starts"""
-    try:
-        await db.connect()
-        yield
-    except:
-        await db.disconnect()
+    await db.connect()
+    yield
+    await db.disconnect()
 
 
 # create application server instance
