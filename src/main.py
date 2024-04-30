@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from src.routers import health_check, user, profile, auth
 from src.models.database import db
 from contextlib import asynccontextmanager
@@ -18,6 +19,15 @@ app = FastAPI(
     lifespan=lifespan,
     title="Profile Management Application",
     description="An application for managing user personal information and profiles",
+)
+
+# add cors middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=[""],
 )
 
 
