@@ -4,9 +4,19 @@ on:
     push:
         branches:
             - main
+            - production
+    pull_request:
+        branches:
+            - production
 
 jobs:
     job1:
+        environment:
+            name: production
+        env: DATABASE_URL=${{secrets.DATABASE_URL}}
+            SQL_ALCHEMY_URL=${{secrets.SQL_ALCHEMY_URL}}
+            JWT_SECRET=${{secrets.JWT_SECRET}}
+            JWT_ACCESS_TOKEN_EXPIRES_MINUTES=${{secrets.JWT_ACCESS_TOKEN_EXPIRES_MINUTES}}
         runs-on: ubuntu-latest
         steps:
             - name: pull git repository
