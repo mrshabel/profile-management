@@ -23,20 +23,19 @@ class UserSchema(BaseModel):
     username: str = Field(
         ..., title="Username", description="The Username of the current user"
     )
-    first_name: str = (
-        Field(..., title="First Name", description="First Name of the user"),
+    first_name: str = Field(
+        ..., title="First Name", description="First Name of the user"
     )
-    last_name: str = (
-        Field(..., title="Last Name", description="Last Name of the user"),
-    )
+    last_name: str = Field(..., title="Last Name", description="Last Name of the user")
     is_active: bool = Field(..., title="Is Active", description="Status of the user")
     # profile: str | None = Field(title="Profile",
     #                             description="Profile connected to the user", default=None)
-    created_at: datetime = (
-        Field(title="Created At", description="Date and time user was created at"),
+    created_at: datetime = Field(
+        ..., title="Created At", description="Date and time user was created at"
     )
-    updated_at: datetime = (
-        Field(title="Updated At", description="Date and time user was updated at"),
+
+    updated_at: datetime = Field(
+        ..., title="Updated At", description="Date and time user was updated at"
     )
 
     # class Config:
