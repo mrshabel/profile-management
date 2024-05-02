@@ -58,12 +58,12 @@ jobs:
 
             - name: Connect to Remote host
               run: |
-                  ssh - ~/.ssh/id_rsa ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}
+                  ssh -i ~/.ssh/id_rsa ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}
                   echo "SSH connection successful"
 
             - name: Checkout directory
               run: |
-                  su - mrshabel
+                  echo ${{secrets.SSH_USER_PASSWORD}} | su - mrshabel
                   cd ~/profile-management
 
             - name: Rebuild Container
