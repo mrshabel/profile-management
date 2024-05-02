@@ -1,0 +1,32 @@
+name: CD
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+            - production
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment: production
+        needs:
+            - build
+
+        steps:
+            - name: Connect to remote SSH host
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{secrets.SSH_HOST}}
+                  username: ${{secrets.SSH_USER}}
+                  password: ${{secrets.SSH_KEY}}
+
+                  script: |
+                      whoami
+                      echo "$SSH_USER_PASSWORD" | su -S mrshabel
+                      cd ~/profile-management
+                      echo "$SSH_USER_PASSWORD" | sudo -S docker compose -f docker-compose.prod.yaml up -d
+                      echo "Container rebuild successful""
