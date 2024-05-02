@@ -2,7 +2,7 @@ version: "3"
 
 services:
     api:
-        build: .
+        image: shabel/profile-management
         env_file:
             - .env
         ports:

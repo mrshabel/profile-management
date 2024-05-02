@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.routers import health_check, user, profile, auth
 from src.models.database import db
 from contextlib import asynccontextmanager
+from src.middlewares import db_exceptions
 
 
 # define context manager for startup and shutdown events
@@ -29,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=[""],
 )
+# app.exception_handler
+app.middleware("http")(db_exceptions.db_exceptions_handler)
 
 
 app.include_router(health_check.router)

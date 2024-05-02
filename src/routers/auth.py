@@ -49,17 +49,17 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
 @router.post("/signup", response_model=SuccessResponseForSignup)
 async def signup(req_data: UserSignUp):
-    try:
-        await signup_user(req_data=req_data)
-    except UniqueViolationError as e:
-        logger.error(msg=f"Unique constraint error", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="User already exists"
-        )
-    except BaseException as e:
-        logger.error(msg="Fatal error", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to add user",
-        )
+    # try:
+    await signup_user(req_data=req_data)
+    # except UniqueViolationError as e:
+    #     logger.error(msg=f"Unique constraint error", exc_info=True)
+    #     raise HTTPException(
+    #         status_code=status.HTTP_409_CONFLICT, detail="User already exists"
+    #     )
+    # except BaseException as e:
+    #     logger.error(msg="Fatal error", exc_info=True)
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail="Failed to add user",
+    #     )
     return SuccessResponseForSignup(message="Signup successful")
