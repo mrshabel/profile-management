@@ -50,6 +50,7 @@ jobs:
               # define env to allow copying contents of the secrets to a new file
               env:
                   SSH_KEY: ${{secrets.SSH_KEY}}
+              shell: bash
               run: |
                   mkdir -p ~/.ssh/
                   echo "$SSH_KEY" > ~/.ssh/id_rsa
@@ -58,7 +59,7 @@ jobs:
 
             - name: Connect to Remote host
               run: |
-                  ssh -i ~/.ssh/id_rsa ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}
+                  ssh -v -i ~/.ssh/id_rsa ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}
                   echo "SSH connection successful"
 
             - name: Checkout directory
