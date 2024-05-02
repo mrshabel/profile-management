@@ -42,10 +42,30 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         environment: production
+        needs:
+            - build
 
         steps:
-            - name: Execute Remote SSH
-              uses: appleboy/ssh-action@v1.0.3
+            - name: Create SSH key
+              # define env to allow copying contents of the secrets to a new file
+              env:
+                  SSH_KEY: ${{secrets.SSH_KEY}}
+              run: |
+                  mkdir -p ~/.ssh/
+                  echo "$SSH_KEY" > ~/.ssh/id_rsa
+                  chmod 600 ~/.ssh/id_rsa
+                  ssh-keyscan -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts
 
-            - name: SSh into remote
-              run: echo "Using ssh client"
+            - name: Connect to Remote host
+              run: |
+                  ssh - ~/.ssh/id_rsa ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}
+                  echo "SSH connection successful"
+
+            - name: Checkout directory
+              run: |
+                  su - mrshabel
+                  cd ~/profile-management
+
+            - name: Rebuild Container
+              run: |
+                  echo ${{secrets.SSH_USER_PASSWORD}} | sudo -S docker compose -f docker-compose.prod.yaml up
