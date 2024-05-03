@@ -55,7 +55,7 @@ jobs:
 
                   script: |
                       whoami
-                      echo "$SSH_USER_PASSWORD" | su -S mrshabel
+                      echo "$SSH_USER_PASSWORD" | sudo -S su mrshabel
                       cd ~/profile-management
                       echo "$SSH_USER_PASSWORD" | sudo -S docker compose -f docker-compose.prod.yaml up -d
                       echo "Container rebuild successful"
