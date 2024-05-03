@@ -57,7 +57,7 @@ jobs:
                       whoami
                       sudo su mrshabel -c '
                       cd ~/profile-management
-                      echo ${{SSH_USER_PASSWORD}} | sudo -S docker compose -f docker-compose.prod.yaml up logs
+                      echo ${{secrets.SSH_USER_PASSWORD}} | sudo -S docker compose -f docker-compose.prod.yaml up logs
                       echo "Container rebuild successful"
                       '
 
