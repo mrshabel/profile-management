@@ -1,5 +1,12 @@
 import pytest
-from src.utils import add, subtract, multiply, divide, BankAccount, InsufficientFunds
+from tests.utils import (
+    add,
+    subtract,
+    multiply,
+    divide,
+    BankAccount,
+    InsufficientFunds,
+)
 
 
 # fixture method instances the test instance of a class
