@@ -57,10 +57,11 @@ jobs:
 
                   script: |
                       whoami
-                      echo "$SSH_USER_PASSWORD" | sudo -S su mrshabel
+                      echo "$SSH_USER_PASSWORD" | sudo -S su mrshabel -c '
                       cd ~/profile-management
                       echo "$SSH_USER_PASSWORD" | sudo -S docker compose -f docker-compose.prod.yaml up -d
                       echo "Container rebuild successful"
+                      '
 
     # deploy:
     #     runs-on: ubuntu-latest
